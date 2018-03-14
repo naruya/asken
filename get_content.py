@@ -12,7 +12,9 @@ start, end = int(sys.argv[1]), int(sys.argv[2])
 
 # 取得した数
 num = 0
-menu = []
+menu = {}
+
+last = 0
 
 error_url = []
 
@@ -25,7 +27,7 @@ for i in range(start, end):
         num += 1
         print("found:", url, ", scraper:", str(start) + '-' + str(end), ", url_id:", i, ", num:" , num)
         me = me.find('div', id="content_all_body")
-        menu.append(me)
+        menu.update({i:me})
         
     except urllib.error.HTTPError as e:
         print("[W] URL Not Found")
@@ -35,7 +37,9 @@ for i in range(start, end):
         error_url.append(url)
 
     if (i+1)%1000==0:
-        with open('data/menu-' + '{0:07d}'.format(start)+ '-' + '{0:07d}'.format(i+1) + '.pkl', 'wb') as f:
+        with open('data/menu-' + '{0:07d}'.format(last)+ '-' + '{0:07d}'.format(i+1) + '.pkl', 'wb') as f:
             pickle.dump(menu, f)
+        menu={}
+        last = i+1
 
 print(error_url)
